@@ -34,9 +34,11 @@ public class CustomerService {
         }
         return customerRepository.findByAuthSubject(subject)
                 .map(customer -> {
-                    if (!java.util.Objects.equals(customer.getEmail(), email)
-                            || !java.util.Objects.equals(customer.getDisplayName(), name)) {
-                        customer.updateProfile(email, name);
+                    String updatedEmail = email == null ? customer.getEmail() : email;
+                    String updatedName = name == null ? customer.getDisplayName() : name;
+                    if (!java.util.Objects.equals(customer.getEmail(), updatedEmail)
+                            || !java.util.Objects.equals(customer.getDisplayName(), updatedName)) {
+                        customer.updateProfile(updatedEmail, updatedName);
                     }
                     return customer;
                 })
@@ -46,6 +48,10 @@ public class CustomerService {
     public CustomerResponse getProfile(Jwt jwt) {
         Customer customer = requireCustomer(jwt);
         return new CustomerResponse(
-                customer.getId(), customer.getEmail(), customer.getDisplayName(), customer.getCreatedAt());
+            customer.getId(),
+            customer.getEmail(),
+            customer.getDisplayName(),
+            customer.getPhoneNumber(),
+            customer.getCreatedAt());
     }
 }

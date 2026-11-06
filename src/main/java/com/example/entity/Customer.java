@@ -28,6 +28,9 @@ public class Customer {
     @Column(name = "display_name", length = 160)
     private String displayName;
 
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -38,9 +41,14 @@ public class Customer {
     }
 
     public Customer(String authSubject, String email, String displayName) {
+        this(authSubject, email, displayName, null);
+    }
+
+    public Customer(String authSubject, String email, String displayName, String phoneNumber) {
         this.authSubject = authSubject;
         this.email = email;
         this.displayName = displayName;
+        this.phoneNumber = phoneNumber;
     }
 
     @PrePersist
@@ -69,6 +77,10 @@ public class Customer {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public Instant getCreatedAt() {

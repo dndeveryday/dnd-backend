@@ -1,0 +1,57 @@
+INSERT INTO customer_orders (
+    id, customer_id, order_number, service_type, status, location,
+    total_amount, currency, created_at, updated_at
+)
+SELECT '10000000-0000-0000-0000-000000000001', :'customer_id'::uuid,
+       'DEMO-FOOD-1001', 'Food', 'DELIVERED', 'Jubilee Hills, Hyderabad',
+       490.00, 'INR', CURRENT_TIMESTAMP - INTERVAL '3 hours', CURRENT_TIMESTAMP - INTERVAL '1 hour 35 minutes'
+WHERE EXISTS (SELECT 1 FROM customer_profiles WHERE id = :'customer_id'::uuid)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO customer_orders (
+    id, customer_id, order_number, service_type, status, location,
+    total_amount, currency, created_at, updated_at
+)
+SELECT '10000000-0000-0000-0000-000000000002', :'customer_id'::uuid,
+       'DEMO-MED-2001', 'Medicine', 'CONFIRMED', 'Madhapur, Hyderabad',
+       440.00, 'INR', CURRENT_TIMESTAMP - INTERVAL '45 minutes', CURRENT_TIMESTAMP - INTERVAL '30 minutes'
+WHERE EXISTS (SELECT 1 FROM customer_profiles WHERE id = :'customer_id'::uuid)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO customer_orders (
+    id, customer_id, order_number, service_type, status, location,
+    total_amount, currency, created_at, updated_at
+)
+SELECT '10000000-0000-0000-0000-000000000003', :'customer_id'::uuid,
+       'DEMO-HANDS-3001', 'Extra Hands', 'IN_TRANSIT', 'Gachibowli, Hyderabad',
+       1200.00, 'INR', CURRENT_TIMESTAMP - INTERVAL '2 hours', CURRENT_TIMESTAMP - INTERVAL '20 minutes'
+WHERE EXISTS (SELECT 1 FROM customer_profiles WHERE id = :'customer_id'::uuid)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO order_items (id, order_id, name, quantity, unit_price) VALUES
+    ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'Vegetable biryani', 2, 220.00),
+    ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'Raita', 1, 50.00),
+    ('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002', 'Daily vitamins', 1, 260.00),
+    ('20000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000002', 'First-aid supplies', 1, 180.00),
+    ('20000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000003', 'Furniture assembly, 2 hours', 1, 1200.00)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO order_events (id, order_id, status, description, occurred_at) VALUES
+    ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'PLACED', 'Food order created', CURRENT_TIMESTAMP - INTERVAL '3 hours'),
+    ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'CONFIRMED', 'Restaurant accepted the order', CURRENT_TIMESTAMP - INTERVAL '2 hours 50 minutes'),
+    ('30000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 'PREPARING', 'Restaurant started preparing the order', CURRENT_TIMESTAMP - INTERVAL '2 hours 30 minutes'),
+    ('30000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000001', 'READY', 'Order is ready for pickup', CURRENT_TIMESTAMP - INTERVAL '2 hours 10 minutes'),
+    ('30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000001', 'IN_TRANSIT', 'Courier picked up the order', CURRENT_TIMESTAMP - INTERVAL '2 hours'),
+    ('30000000-0000-0000-0000-000000000006', '10000000-0000-0000-0000-000000000001', 'DELIVERED', 'Order delivered', CURRENT_TIMESTAMP - INTERVAL '1 hour 35 minutes'),
+    ('30000000-0000-0000-0000-000000000007', '10000000-0000-0000-0000-000000000002', 'PLACED', 'Medicine order created', CURRENT_TIMESTAMP - INTERVAL '45 minutes'),
+    ('30000000-0000-0000-0000-000000000008', '10000000-0000-0000-0000-000000000002', 'CONFIRMED', 'Pharmacy confirmed availability', CURRENT_TIMESTAMP - INTERVAL '30 minutes'),
+    ('30000000-0000-0000-0000-000000000009', '10000000-0000-0000-0000-000000000003', 'PLACED', 'Extra Hands task requested', CURRENT_TIMESTAMP - INTERVAL '2 hours'),
+    ('30000000-0000-0000-0000-000000000010', '10000000-0000-0000-0000-000000000003', 'CONFIRMED', 'Partner accepted the task', CURRENT_TIMESTAMP - INTERVAL '90 minutes'),
+    ('30000000-0000-0000-0000-000000000011', '10000000-0000-0000-0000-000000000003', 'IN_TRANSIT', 'Partner is on the way', CURRENT_TIMESTAMP - INTERVAL '20 minutes')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO payments (id, order_id, status, amount, currency, provider_reference, created_at, paid_at) VALUES
+    ('40000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'PAID', 490.00, 'INR', 'DEMO-PAY-FOOD-1001', CURRENT_TIMESTAMP - INTERVAL '3 hours', CURRENT_TIMESTAMP - INTERVAL '2 hours 59 minutes'),
+    ('40000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002', 'PENDING', 440.00, 'INR', 'DEMO-PAY-MED-2001', CURRENT_TIMESTAMP - INTERVAL '45 minutes', NULL),
+    ('40000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000003', 'AUTHORIZED', 1200.00, 'INR', 'DEMO-PAY-HANDS-3001', CURRENT_TIMESTAMP - INTERVAL '2 hours', NULL)
+ON CONFLICT (id) DO NOTHING;
